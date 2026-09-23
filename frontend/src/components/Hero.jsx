@@ -1,16 +1,72 @@
+import { useEffect, useState } from "react";
+import jaguar from "../assets/jaguar.webp";
+import porshe2 from "../assets/porshe2.webp";
+import scenery from "../assets/scenery.webp";
+
+const heroImages = [
+  jaguar,
+  porshe2,
+  scenery,
+];
+
 export default function Hero() {
+  const [currentImage, setCurrentImage] = useState(0);
+
+  useEffect(() => {
+    // Preload images after the first image has loaded.
+    const preloadImages = heroImages.slice(1).map((src) => {
+      const img = new Image();
+      img.src = src;
+      return img;
+    });
+
+    const interval = setInterval(() => {
+      setCurrentImage((current) => (current + 1) % heroImages.length);
+    }, 6000);
+
+    return () => {
+      clearInterval(interval);
+
+      // Prevent unused Image objects from being retained.
+      preloadImages.forEach((img) => {
+        img.src = "";
+      });
+    };
+  }, []);
+
   return (
     <section className="hero">
+      {/* Background slideshow */}
+      <div className="hero__background" aria-hidden="true">
+        {heroImages.map((image, index) => (
+          <div
+            key={image}
+            className={`hero__background-image ${
+              index === currentImage ? "is-active" : ""
+            }`}
+            style={{ backgroundImage: `url("${image}")` }}
+          />
+        ))}
+
+        {/* Dark translucent layer */}
+        <div className="hero__overlay" />
+      </div>
+
       <div className="container hero__inner">
-        <p className="hero__eyebrow">MYB Group Intranet</p>
+        <p className="hero__eyebrow">MYB Group</p>
+
         <h1 className="hero__title">
-          Ninety years of trade, in one place to work from today.
+          Moving Forward Together : Balancing Performance, Clarity, and
+          Wellbeing
         </h1>
+
         <p className="hero__sub">
-          Everything you need for your working day — company systems, the
-          latest circulars, upcoming events and the people directory.
+          Discipline sustains our progress, accountability strengthens our
+          standards, and honesty preserves the trust on which our culture is
+          built.
         </p>
       </div>
+
       <svg
         className="hero__ridge"
         viewBox="0 0 1440 80"

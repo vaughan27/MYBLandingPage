@@ -1,15 +1,12 @@
-function TwinPeakMark({ size = 34 }) {
+import newLogo from "../assets/new-logo.svg";
+
+function TwinPeakMark() {
   return (
-    <svg width={size} height={size * 0.7} viewBox="0 0 48 34" aria-hidden="true">
-      <path
-        d="M2 32 L16 6 L24 20 L32 6 L46 32"
-        fill="none"
-        stroke="var(--navy-700)"
-        strokeWidth="3"
-        strokeLinejoin="round"
-        strokeLinecap="round"
-      />
-    </svg>
+    <img
+      src={newLogo}
+      alt="Morad Yousuf Behbehani"
+      className="site-header__logo"
+    />
   );
 }
 

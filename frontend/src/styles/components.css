@@ -1,4 +1,9 @@
 /* ---------- Header ---------- */
+.site-header__logo {
+  display: block;
+  width: 100px;
+  height: auto;
+}
 .site-header {
   background: var(--white);
   border-bottom: 1px solid var(--slate-200);
@@ -36,31 +41,135 @@
 /* ---------- Hero ---------- */
 .hero {
   position: relative;
-  background: var(--navy-900);
-  color: var(--white);
+  min-height: 620px;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  isolation: isolate;
   padding: var(--space-5) 0 var(--space-4);
+
 }
-.hero__inner { max-width: 640px; }
-.hero__eyebrow {
-  color: var(--bronze-100);
-  font-size: 0.9rem;
-  margin: 0 0 var(--space-2);
+
+/* --------------------------------
+   Background slideshow
+-------------------------------- */
+
+.hero__background {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  overflow: hidden;
 }
-.hero__title {
-  color: var(--white);
-  font-size: clamp(2rem, 4vw, 2.75rem);
-  line-height: 1.15;
+
+.hero__background-image {
+  position: absolute;
+  inset: 0;
+
+  background-size: cover;
+  background-position: center;
+
+  opacity: 0;
+  transform: scale(1.02);
+
+  transition:
+    opacity 1.4s ease-in-out,
+    transform 8s ease-out;
+
+  will-change: opacity, transform;
 }
+
+.hero__background-image.is-active {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* --------------------------------
+   Dark translucent overlay
+-------------------------------- */
+
+.hero__overlay {
+  position: absolute;
+  inset: 0;
+
+  background:
+    linear-gradient(
+      90deg,
+      rgba(0, 0, 0, 0.68) 0%,
+      rgba(0, 0, 0, 0.52) 45%,
+      rgba(0, 0, 0, 0.38) 100%
+    );
+
+  z-index: 1;
+}
+
+/* --------------------------------
+   Hero content
+-------------------------------- */
+
+.hero__inner {
+  position: relative;
+  z-index: 2;
+  padding: 8rem 10rem 10rem;
+}
+
+.hero__eyebrow,
+.hero__title,
 .hero__sub {
-  color: var(--sand-100);
-  max-width: 46ch;
+  color: white;
 }
+
+/* --------------------------------
+   Ridge remains above background
+-------------------------------- */
+
 .hero__ridge {
   position: absolute;
-  left: 0; right: 0; bottom: -1px;
+  bottom: -1px;
+  left: 0;
   width: 100%;
-  height: 40px;
+  height: 80px;
+  z-index: 3;
+  pointer-events: none;
 }
+
+/* --------------------------------
+   Mobile
+-------------------------------- */
+
+@media (max-width: 768px) {
+  .hero {
+    min-height: 680px;
+  }
+
+  .hero__background-image {
+    background-position: center;
+  }
+
+  .hero__overlay {
+    background:
+      linear-gradient(
+        180deg,
+        rgba(0, 0, 0, 0.62) 0%,
+        rgba(0, 0, 0, 0.58) 100%
+      );
+  }
+
+  .hero__inner {
+     padding: 8rem 1rem 10rem;
+  }
+}
+
+/* --------------------------------
+   Accessibility / reduced motion
+-------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .hero__background-image {
+    transition: none;
+    transform: none;
+  }
+}
+
 
 /* ---------- Quick links (plain row) ---------- */
 .quick-links {

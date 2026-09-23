@@ -7,8 +7,8 @@ export const SECTIONS = [
   { id: "hero", enabled: true, component: "Hero" },
   { id: "quickLinks", enabled: true, component: "QuickLinks" },
   { id: "featureTiles", enabled: true, component: "FeatureTiles" },
-  { id: "gallery", enabled: true, component: "Gallery" },
-  { id: "events", enabled: true, component: "Events" },
-  { id: "newsletter", enabled: true, component: "Newsletter" },
+  { id: "gallery", enabled: false, component: "Gallery" },
+  { id: "events", enabled: false, component: "Events" },
+  { id: "newsletter", enabled: false, component: "Newsletter" },
   { id: "latestNews", enabled: true, component: "LatestNews" },
 ];
