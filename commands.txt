@@ -1,4 +1,27 @@
-createdb myb && psql -d myb -f db/schema.sql        # 1. database
+createdb landingPage && psql -d landingPage -f db/schema.sql        # 1. database
+create: landingPage in pgAdmin
+Select:
+landingPage
+Then open:
+Tools → Query Tool
+You'll get a SQL editor.
+Open your project's:
+C:\Users\User\Desktop\intranet-landing\db\schema.sql
+Copy its contents into the Query Tool, then click the Execute ▶ button.
+
 postgrest db/postgrest.conf                          # 2. PostgREST on :3001
-cd backend && uv sync && uv run uvicorn app.main:app --reload --port 8000   # 3. API on :8000
+install postgrest.exe 
+.\postgrest.exe --version
+Get-Item .\postgrest.exe | Select-Object Name,Length,FullName
+Get-AuthenticodeSignature .\postgrest.exe
+.\postgrest.exe --help
+$LASTEXITCODE
+Test-Path "C:\Program Files\PostgreSQL\18\bin\libpq.dll"
+Get-Item "C:\Program Files\PostgreSQL\18\bin\libpq.dll"
+$env:Path = "C:\Program Files\PostgreSQL\18\bin;$env:Path"
+.\postgrest.exe --version
+.\postgrest.exe db/postgrest.conf
+
+cd backend && uv sync && uv run uvicorn app.main:app --reload --port 8004   # 3. API on :8004
+
 cd frontend && npm install && npm run dev             # 4. Vite on :5173

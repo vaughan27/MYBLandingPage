@@ -4,7 +4,7 @@ import os
 # Everything is overridable via env vars so nothing secret lives in git.
 
 DATABASE_URL = os.getenv(
-    "DATABASE_URL", "postgresql://web_writer:web_writer_pw@localhost:5432/myb"
+    "DATABASE_URL", "postgresql://web_writer:web_writer_pw@localhost:5432/landingPage"
 )
 
 # The hidden dashboard's URL path. Change this per deployment; don't link to it

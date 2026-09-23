@@ -30,17 +30,17 @@ You need three things installed once: **Postgres** (16+), the **PostgREST** bina
 
 ### 1. Database
 ```bash
-createdb myb
-psql -d myb -f db/schema.sql
+createdb landingPage
+psql -d landingPage -f db/schema.sql
 ```
-This creates the `api` schema, the `web_anon` / `authenticator` / `web_writer` roles, and seeds sample data. If you re-run it, drop the db first: `dropdb myb && createdb myb`.
+This creates the `api` schema, the `web_anon` / `authenticator` / `web_writer` roles, and seeds sample data. If you re-run it, drop the db first: `dropdb landingPage && createdb landingPage`.
 
 By default the roles use the passwords baked into `schema.sql` (`authenticator` / `postgres`, `web_writer` / `web_writer_pw`) — fine for local dev, change them for anything shared.
 
 ### 2. PostgREST (serves the `*_public` content views)
 Download the binary once from https://github.com/PostgREST/postgrest/releases (grab the `linux-static-x64` or `macos` tarball, extract it, put `postgrest` on your PATH). Then:
 ```bash
-PGRST_DB_URI="postgres://authenticator:postgres@localhost:5432/myb" \
+PGRST_DB_URI="postgres://authenticator:postgres@localhost:5432/landingPage" \
 PGRST_DB_SCHEMAS="api" \
 PGRST_DB_ANON_ROLE="web_anon" \
 PGRST_SERVER_PORT=3001 \
@@ -52,7 +52,7 @@ postgrest
 ```bash
 cd backend
 uv sync                # creates .venv and installs deps from pyproject.toml
-DATABASE_URL="postgresql://web_writer:web_writer_pw@localhost:5432/myb" \
+DATABASE_URL="postgresql://web_writer:web_writer_pw@localhost:5432/landingPage" \
 DASHBOARD_KEY="change-me" \
 CORS_ORIGINS="http://localhost:5173" \
 uv run uvicorn app.main:app --reload --port 8000
