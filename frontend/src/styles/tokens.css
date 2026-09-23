@@ -1,0 +1,115 @@
+/*
+  Design plan
+  -----------
+  Subject: a 90-year-old Kuwaiti trading & retail group's internal homepage.
+  Audience: staff, at their desk, mostly scanning for a link they already
+  know they need — this is a utility page wearing corporate dress, not a
+  marketing site. The one place to spend "boldness" is the heritage mark
+  (the twin-peak logo motif) reused as a subtle structural device, not as
+  decoration.
+
+  Color:
+    --navy-900  #0B2340   deep navy, header / footer ground
+    --navy-700  #12365E   primary brand navy (from the existing logo)
+    --bronze-500 #A9813F  heritage accent — "Since 1935" gravitas, used sparingly
+    --sand-50   #F7F4EE   warm off-white page background (not clinical white)
+    --slate-700 #33404D   body text
+    --slate-200 #DDE3E8   hairlines / borders
+
+  Type: "Fraunces" (serif, heritage headlines) + "Inter" (sans, everything
+  else — nav, body, UI labels). Two clearly distinct roles, not decorative.
+
+  Layout: centered content column (max 1180px), left-aligned text within it
+  (a centered heritage page reads as a wedding invitation, not a workplace
+  tool). Section rhythm: generous vertical space, thin bronze hairline
+  between sections instead of cards-in-boxes everywhere.
+
+  Principle: one motif (the twin-peak mark, tiny bronze triangle glyphs used
+  as list markers/dividers) repeated quietly; everything else stays plain
+  navy-on-sand with restrained borders — no shadows, no gradients, no
+  rounded-card-kit.
+*/
+
+:root {
+  --navy-900: #0b2340;
+  --navy-700: #12365e;
+  --navy-600: #1c4272;
+  --bronze-500: #a9813f;
+  --bronze-100: #f1e6cf;
+  --sand-50: #f7f4ee;
+  --sand-100: #f0ece2;
+  --white: #ffffff;
+  --slate-700: #33404d;
+  --slate-500: #5b6773;
+  --slate-200: #dde3e8;
+
+  --font-display: "Fraunces", Georgia, serif;
+  --font-body: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+
+  --content-width: 1180px;
+  --radius-sm: 3px;
+
+  --space-1: 0.5rem;
+  --space-2: 1rem;
+  --space-3: 1.75rem;
+  --space-4: 2.75rem;
+  --space-5: 4.5rem;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: var(--sand-50);
+  color: var(--slate-700);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.55;
+}
+
+h1, h2, h3 {
+  font-family: var(--font-display);
+  color: var(--navy-900);
+  margin: 0 0 var(--space-2);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.container {
+  max-width: var(--content-width);
+  margin: 0 auto;
+  padding: 0 var(--space-3);
+}
+
+.hairline {
+  border: none;
+  border-top: 1px solid var(--slate-200);
+  margin: 0;
+}
+
+/* the twin-peak mark, used as a tiny recurring glyph rather than decoration */
+.peak-glyph {
+  display: inline-block;
+  width: 14px;
+  height: 10px;
+}
+
+:focus-visible {
+  outline: 2px solid var(--bronze-500);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation: none !important; transition: none !important; }
+}
