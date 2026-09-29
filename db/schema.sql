@@ -23,10 +23,10 @@ create table api.feature_tiles (
     title       text not null,
     href        text not null,
     icon        text default 'doc',
-    sort_order  int  not null default 0,
+    img_url     text,
+    sort_order  int not null default 0,
     enabled     boolean not null default true
 );
-
 create table api.gallery_images (
     id          serial primary key,
     caption     text,
@@ -108,7 +108,7 @@ create view api.quick_links_public as
 grant select on api.quick_links_public to web_anon;
 
 create view api.feature_tiles_public as
-  select id, title, href, icon, sort_order from api.feature_tiles
+  select id, title, href, icon, img_url, sort_order from api.feature_tiles
   where enabled order by sort_order;
 grant select on api.feature_tiles_public to web_anon;
 

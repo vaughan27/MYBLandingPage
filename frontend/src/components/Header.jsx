@@ -1,9 +1,7 @@
-import newLogo from "../assets/new-logo.svg";
-
 function TwinPeakMark() {
   return (
     <img
-      src={newLogo}
+      src={"/assets/new-logo.svg"}
       alt="Morad Yousuf Behbehani"
       className="site-header__logo"
     />
@@ -24,12 +22,26 @@ export default function Header() {
 
         <nav className="site-header__utility" aria-label="Utility links">
           <a href="/search" aria-label="Search">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+            <svg
+              width="28"
+              height="28"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.8"
+            >
               <circle cx="11" cy="11" r="7" />
-              <path d="m20 20-3.5-3.5" strokeLinecap="round" />
+              <path
+                d="m20 20-3.5-3.5"
+                strokeLinecap="round"
+              />
             </svg>
           </a>
-          <a href="/feedback">Feedback</a>
+
+          <a href="/whats-new" className="site-header__whats-new">
+            <span className="site-header__whats-new-star">✦</span>            
+            What's New
+          </a>
         </nav>
       </div>
     </header>

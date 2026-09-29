@@ -10,12 +10,12 @@ export const FALLBACK_QUICK_LINKS = [
 ];
 
 export const FALLBACK_FEATURE_TILES = [
-  { id: 1, title: "MYB Internal Site", href: "/internal", icon: "doc" },
-  { id: 2, title: "H.O. Meeting Room Booking", href: "/room-booking", icon: "meeting" },
-  { id: 3, title: "Money Laundering Prevention & Control", href: "/aml", icon: "shield" },
-  { id: 4, title: "Document Management System", href: "/dms", icon: "folder" },
-  { id: 5, title: "Organizational Flowchart", href: "/org-chart", icon: "chart" },
-  { id: 6, title: "Pay by Link", href: "/pay", icon: "card" },
+  { id: 1, title: "MYB Internal Site", href: "/internal", icon: "doc", img_url: "/assets/internal_site_2.webp" },
+  { id: 2, title: "H.O. Meeting Room Booking", href: "/room-booking", icon: "meeting", img_url: "/assets/meeting_room.webp" },
+  { id: 3, title: "Money Laundering Prevention & Control", href: "/aml", icon: "shield", img_url: "/assets/money_laundering.webp" },
+  { id: 4, title: "Document Management System", href: "/dms", icon: "folder", img_url: "/assets/document_management.webp" },
+  { id: 5, title: "Organizational Flowchart", href: "/org-chart", icon: "chart", img_url: "/assets/organizational_flow.webp" },
+  { id: 6, title: "Pay by Link", href: "/pay", icon: "card", img_url: "/assets/pay_by_link.webp" },
 ];
 
 export const FALLBACK_EVENTS = [

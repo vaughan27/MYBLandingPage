@@ -1,12 +1,9 @@
 import { useEffect, useState } from "react";
-import jaguar from "../assets/jaguar.webp";
-import porshe2 from "../assets/porshe2.webp";
-import scenery from "../assets/scenery.webp";
 
 const heroImages = [
-  jaguar,
-  porshe2,
-  scenery,
+  "/assets/BehBehani.webp",
+  "/assets/porshe2.webp",
+  "/assets/scenery.webp",
 ];
 
 export default function Hero() {

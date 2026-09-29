@@ -11,17 +11,40 @@ Copy its contents into the Query Tool, then click the Execute ▶ button.
 
 postgrest db/postgrest.conf                          # 2. PostgREST on :3001
 install postgrest.exe 
+.\postgrest.exe --help
 .\postgrest.exe --version
 Get-Item .\postgrest.exe | Select-Object Name,Length,FullName
 Get-AuthenticodeSignature .\postgrest.exe
-.\postgrest.exe --help
 $LASTEXITCODE
 Test-Path "C:\Program Files\PostgreSQL\18\bin\libpq.dll"
 Get-Item "C:\Program Files\PostgreSQL\18\bin\libpq.dll"
 $env:Path = "C:\Program Files\PostgreSQL\18\bin;$env:Path"
 .\postgrest.exe --version
+
 .\postgrest.exe db/postgrest.conf
+Get-Process postgrest -ErrorAction SilentlyContinue
 
 cd backend && uv sync && uv run uvicorn app.main:app --reload --port 8004   # 3. API on :8004
 
 cd frontend && npm install && npm run dev             # 4. Vite on :5173
+
+--further changes--
+ALTER TABLE api.feature_tiles
+ADD COLUMN img_url text;
+
+CREATE OR REPLACE VIEW api.feature_tiles_public AS
+SELECT
+    id,
+    title,
+    href,
+    icon,
+    img_url,
+    sort_order
+FROM api.feature_tiles
+WHERE enabled
+ORDER BY sort_order;
+
+--git--
+git rm --cached postgrest.exe
+git add .gitignore
+git commit -m "Ignore executable files"
