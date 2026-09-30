@@ -14,3 +14,22 @@ cd backend && uv sync && uv run uvicorn app.main:app --reload --port 8004   # 3.
 cd frontend && npm install && npm run dev             # 4. Vite on :5173
 
 --further changes--
+ALTER TABLE api.feature_tiles
+ADD COLUMN img_url text;
+
+CREATE OR REPLACE VIEW api.feature_tiles_public AS
+SELECT
+    id,
+    title,
+    href,
+    icon,
+    img_url,
+    sort_order
+FROM api.feature_tiles
+WHERE enabled
+ORDER BY sort_order;
+
+--git--
+git rm --cached postgrest.exe
+git add .gitignore
+git commit -m "Ignore executable files"

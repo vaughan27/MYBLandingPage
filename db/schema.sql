@@ -34,6 +34,7 @@ create table feature_tiles (
     id          serial primary key,
     title       text not null,
     href        text not null,
+    umg_url     text,
     icon        text default 'doc',
     sort_order  int  not null default 0,
     enabled     boolean not null default true
