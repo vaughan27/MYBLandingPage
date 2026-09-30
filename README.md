@@ -1,76 +1,67 @@
 # MYB Intranet Landing Page — Revamp
 
-A modular replacement for the old MYB intranet homepage. Built as three independent
-services so you can swap or extend any layer without touching the others:
+A modular replacement for the old MYB intranet homepage. Two services:
 
 ```
 frontend/   React (Vite) — the public landing page + the hidden analytics dashboard
-backend/    FastAPI — custom logic: visitor tracking/cookies, dashboard stats, newsletter relay
-db/         Postgres schema + PostgREST config — instant REST API for simple content tables
+backend/    FastAPI — ALL data access: content reads, visitor tracking, newsletter, dashboard
+db/         Postgres schema — plain tables, no roles/views beyond one app user
 ```
 
-## Why this split
+**This used to be three services** (Postgres + PostgREST + FastAPI). PostgREST
+has been removed — FastAPI now reads and writes everything itself
+(`backend/app/routers/content.py` is what replaced it). One database role
+(`myb_app`), no read-only views, no separate REST-generation layer. Fewer
+moving parts, one less thing to run and keep in sync.
 
-- **PostgREST** sits directly on Postgres and auto-generates a REST API for the
-  "content" tables that are basically CRUD: `quick_links`, `events`, `news_items`,
-  `newsletter_subscribers`, `gallery_images`. Editing a table (or adding a new one)
-  is enough to add a new content type — no backend code required.
-- **FastAPI** handles everything that isn't plain CRUD: setting/reading the visitor
-  cookie, logging page views, computing the aggregated numbers the dashboard shows,
-  and proxying newsletter signups (so the public site never talks to Postgres
-  directly with write access).
+- **FastAPI** handles both plain content (quick links, events, news, gallery —
+  see `routers/content.py`) and logic (visitor cookie, page-view logging,
+  dashboard aggregates, newsletter signups). Every route talks to Postgres
+  through the same `get_conn()` helper in `database.py`.
 - **React frontend** renders sections from a single config file
   (`frontend/src/config/sections.config.js`). Turning a section on/off, or
   reordering the page, is a one-line change there — see "Adding/removing a
   section" below.
 
-## Local setup (no Docker — Postgres, PostgREST and the backend run as native processes)
+## Local setup (Postgres + FastAPI, no Docker, no PostgREST)
 
-You need three things installed once: **Postgres** (16+), the **PostgREST** binary, and **[uv](https://docs.astral.sh/uv/)** for Python. Node/npm for the frontend as usual.
+You need **Postgres** (16+), **[uv](https://docs.astral.sh/uv/)** for Python, and Node/npm for the frontend.
 
 ### 1. Database
 ```bash
 createdb landingPage
 psql -d landingPage -f db/schema.sql
 ```
-This creates the `api` schema, the `web_anon` / `authenticator` / `web_writer` roles, and seeds sample data. If you re-run it, drop the db first: `dropdb landingPage && createdb landingPage`.
+This creates the `public` schema, one `myb_app` role, and seeds sample data. Re-running it needs a fresh db: `dropdb myb && createdb myb` first (see "db/schema.sql runs once" below).
 
-By default the roles use the passwords baked into `schema.sql` (`authenticator` / `postgres`, `web_writer` / `web_writer_pw`) — fine for local dev, change them for anything shared.
+The default password baked into `schema.sql` is `myb_app_pw` — fine for local dev, change it (and the matching `DATABASE_URL` below) for anything shared.
 
-### 2. PostgREST (serves the `*_public` content views)
-Download the binary once from https://github.com/PostgREST/postgrest/releases (grab the `linux-static-x64` or `macos` tarball, extract it, put `postgrest` on your PATH). Then:
-```bash
-PGRST_DB_URI="postgres://authenticator:postgres@localhost:5432/landingPage" \
-PGRST_DB_SCHEMAS="api" \
-PGRST_DB_ANON_ROLE="web_anon" \
-PGRST_SERVER_PORT=3001 \
-postgrest
-```
-(Or point it at `db/postgrest.conf` instead of env vars: `postgrest db/postgrest.conf`.)
-
-### 3. Backend (FastAPI, via uv)
+### 2. Backend (FastAPI, via uv) — this now serves everything
 ```bash
 cd backend
 uv sync                # creates .venv and installs deps from pyproject.toml
-DATABASE_URL="postgresql://web_writer:web_writer_pw@localhost:5432/landingPage" \
+DATABASE_URL="postgresql://myb_app:myb_app_pw@localhost:5432/myb" \
 DASHBOARD_KEY="change-me" \
 CORS_ORIGINS="http://localhost:5173" \
 uv run uvicorn app.main:app --reload --port 8000
 ```
 `uv sync` reads `pyproject.toml` and gives you a `.venv` + `uv.lock` — no `pip install`, no requirements.txt to keep in sync by hand.
 
-### 4. Frontend
+### 3. Frontend
 ```bash
 cd frontend
 npm install
 npm run dev
 ```
-Vite's dev proxy (`vite.config.js`) already forwards `/api` → `:8000` and `/content` → `:3001`, so nothing else to configure.
+Vite's dev proxy (`vite.config.js`) forwards `/api` → `:8000`. That's the only proxy needed now — there's no separate `:3001` to configure.
 
 Visit `http://localhost:5173`. The hidden dashboard is at whatever `DASHBOARD_PATH` you set (default `/ops/pulse-9f21`, see `backend/app/config.py` and `frontend/src/config/dashboard.js` — **keep those two in sync**), gated further by the `DASHBOARD_KEY` env var above.
 
 ### Running everything at once
-Four terminal tabs is normal for this kind of stack. If that's annoying, a simple `Procfile` + `honcho`/`overmind`, or just a short shell script with `&` and a trap to kill on exit, works well — happy to add one if you want it.
+Three terminal tabs (down from four). If that's annoying, a simple `Procfile` + `honcho`/`overmind`, or a short shell script with `&` and a trap to kill on exit, works well — happy to add one if you want it.
+
+### `db/schema.sql` runs once, not repeatedly
+It's a "create from scratch" script (`CREATE ROLE`, `CREATE TABLE`...) — running it against a database that already has these objects will error. For a structural change later (new column, new table), write a small one-off `ALTER TABLE ...` and run just that against the live database, then update `schema.sql` by hand so it still reflects the full picture for the next fresh install.
 
 ## Adding / removing a landing page section
 
@@ -95,8 +86,9 @@ export const SECTIONS = [
 
 Quick links, feature tiles, and gallery images are themselves data, not hardcoded
 markup — they come from the `quick_links`, `feature_tiles`, and `gallery_images`
-tables via PostgREST, with a local JSON fallback in `frontend/src/config/` used
-only if the API is unreachable (so the page still renders something in dev).
+tables, served via FastAPI's `/api/content/*` endpoints (`backend/app/routers/content.py`),
+with a local JSON fallback in `frontend/src/config/` used only if the API is
+unreachable (so the page still renders something in dev).
 
 ## About the "secret" dashboard
 

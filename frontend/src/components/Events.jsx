@@ -11,7 +11,7 @@ function formatDate(iso) {
 }
 
 export default function Events() {
-  const { data: events } = useContent("events_public", FALLBACK_EVENTS);
+  const { data: events } = useContent("events", FALLBACK_EVENTS);
 
   return (
     <section className="events">

@@ -38,16 +38,16 @@ def track(payload: TrackPayload, request: Request, response: Response):
     with get_conn() as conn, conn.cursor() as cur:
         cur.execute(
             """
-            insert into api.visitors (visitor_id)
+            insert into visitors (visitor_id)
             values (%s)
             on conflict (visitor_id)
-            do update set last_seen = now(), visit_count = api.visitors.visit_count + 1
+            do update set last_seen = now(), visit_count = visitors.visit_count + 1
             """,
             (visitor_id,),
         )
         cur.execute(
             """
-            insert into api.page_views (visitor_id, path, referrer, user_agent)
+            insert into page_views (visitor_id, path, referrer, user_agent)
             values (%s, %s, %s, %s)
             """,
             (
@@ -73,15 +73,15 @@ def dashboard_summary(x_dashboard_key: str | None = Header(default=None)):
     _require_dashboard_key(x_dashboard_key)
 
     with get_conn() as conn, conn.cursor() as cur:
-        cur.execute("select count(*) as total from api.visitors")
+        cur.execute("select count(*) as total from visitors")
         total_visitors = cur.fetchone()["total"]
 
-        cur.execute("select count(*) as total from api.page_views")
+        cur.execute("select count(*) as total from page_views")
         total_views = cur.fetchone()["total"]
 
         cur.execute(
             """
-            select count(*) as total from api.page_views
+            select count(*) as total from page_views
             where viewed_at >= now() - interval '1 day'
             """
         )
@@ -90,7 +90,7 @@ def dashboard_summary(x_dashboard_key: str | None = Header(default=None)):
         cur.execute(
             """
             select date_trunc('day', viewed_at)::date as day, count(*) as views
-            from api.page_views
+            from page_views
             where viewed_at >= now() - interval '14 days'
             group by 1 order by 1
             """
@@ -100,7 +100,7 @@ def dashboard_summary(x_dashboard_key: str | None = Header(default=None)):
         cur.execute(
             """
             select path, count(*) as views
-            from api.page_views
+            from page_views
             group by path order by views desc limit 10
             """
         )
@@ -109,7 +109,7 @@ def dashboard_summary(x_dashboard_key: str | None = Header(default=None)):
         cur.execute(
             """
             select referrer, count(*) as views
-            from api.page_views
+            from page_views
             where referrer is not null and referrer <> ''
             group by referrer order by views desc limit 10
             """

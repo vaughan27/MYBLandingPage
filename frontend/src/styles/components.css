@@ -171,8 +171,9 @@
   left: 0;
   width: 100%;
   height: 80px;
-  z-index: 3;
+  z-index: 4;
   pointer-events: none;
+  display: block;
 }
 
 /* --------------------------------
@@ -563,7 +564,7 @@
 
 .feature-tiles__card:hover::after {
   transform: scale(1.5);
-  opacity: 0.12;
+  opacity: 0.32;
 }
 
 .feature-tiles__card:hover .feature-tiles__icon {

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { CONTENT_BASE, fetchJSON } from "../config/api";
 
 /**
- * Loads a PostgREST view (e.g. "quick_links_public") and falls back to local
+ * Loads a PostgREST view (e.g. "quick-links") and falls back to local
  * static data if the request fails, so the page never renders empty.
  */
 export function useContent(viewName, fallbackData) {

@@ -22,7 +22,7 @@ def subscribe(payload: SubscribePayload):
     try:
         with get_conn() as conn, conn.cursor() as cur:
             cur.execute(
-                "insert into api.newsletter_subscribers (email) values (%s)",
+                "insert into newsletter_subscribers (email) values (%s)",
                 (payload.email,),
             )
     except psycopg.errors.UniqueViolation:

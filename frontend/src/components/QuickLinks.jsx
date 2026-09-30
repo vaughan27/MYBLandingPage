@@ -3,7 +3,7 @@ import { FALLBACK_QUICK_LINKS } from "../config/fallbackContent";
 import Icon from "./Icon";
 
 export default function QuickLinks() {
-  const { data: links } = useContent("quick_links_public", FALLBACK_QUICK_LINKS);
+  const { data: links } = useContent("quick-links", FALLBACK_QUICK_LINKS);
 
   return (
     <section className="quick-links">

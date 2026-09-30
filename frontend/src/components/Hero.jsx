@@ -71,10 +71,28 @@ export default function Hero() {
         aria-hidden="true"
       >
         <path
-          d="M0 80 L120 20 L240 60 L360 10 L480 55 L600 15 L720 60 L840 20 L960 58 L1080 12 L1200 55 L1320 20 L1440 50 L1440 80 Z"
+          d="
+            M0 80
+            L0 40
+            L120 10
+            L240 40
+            L360 10
+            L480 40
+            L600 10
+            L720 40
+            L840 10
+            L960 40
+            L1080 10
+            L1200 40
+            L1320 10
+            L1440 40
+            L1440 82
+            Z
+          "
           fill="var(--sand-50)"
         />
       </svg>
+
     </section>
   );
 }

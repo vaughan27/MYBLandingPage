@@ -2,7 +2,7 @@ import { useContent } from "../hooks/useContent";
 import { FALLBACK_NEWS } from "../config/fallbackContent";
 
 export default function LatestNews() {
-  const { data: news } = useContent("news_items_public", FALLBACK_NEWS);
+  const { data: news } = useContent("news", FALLBACK_NEWS);
 
   return (
     <section className="latest-news">

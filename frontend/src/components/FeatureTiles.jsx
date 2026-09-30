@@ -3,7 +3,7 @@ import { FALLBACK_FEATURE_TILES } from "../config/fallbackContent";
 import Icon from "./Icon";
 
 export default function FeatureTiles() {
-  const { data: tiles } = useContent("feature_tiles_public", FALLBACK_FEATURE_TILES);
+  const { data: tiles } = useContent("feature-tiles", FALLBACK_FEATURE_TILES);
 
   return (
     <section className="feature-tiles">

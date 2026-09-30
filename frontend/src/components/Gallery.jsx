@@ -2,7 +2,7 @@ import { useContent } from "../hooks/useContent";
 import { FALLBACK_GALLERY } from "../config/fallbackContent";
 
 export default function Gallery() {
-  const { data: images } = useContent("gallery_images_public", FALLBACK_GALLERY);
+  const { data: images } = useContent("gallery", FALLBACK_GALLERY);
 
   return (
     <section className="gallery">

@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from .config import CORS_ORIGINS
-from .routers import analytics, newsletter
+from .routers import analytics, newsletter, content
 
 app = FastAPI(title="MYB Intranet API")
 
@@ -16,6 +16,7 @@ app.add_middleware(
 
 app.include_router(analytics.router)
 app.include_router(newsletter.router)
+app.include_router(content.router)
 
 
 @app.get("/api/health")

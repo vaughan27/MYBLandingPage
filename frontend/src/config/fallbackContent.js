@@ -38,13 +38,13 @@ export const FALLBACK_EVENTS = [
 export const FALLBACK_NEWS = [
   {
     id: 1,
-    title: "New ESS Portal Features Live",
+    title: "April Newsletter",
     summary: "Leave requests and payslips now available on mobile.",
     url: "/news/ess-update",
   },
   {
     id: 2,
-    title: "MYB Marks 90 Years",
+    title: "June Newsletter",
     summary: "A look back at nine decades of the group's history.",
     url: "/news/90-years",
   },

@@ -144,7 +144,7 @@ wheels = [
 ]
 
 [[package]]
-name = "landingPage-intranet-backend"
+name = "myb-intranet-backend"
 version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
