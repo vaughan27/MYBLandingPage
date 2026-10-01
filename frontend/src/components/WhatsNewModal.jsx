@@ -10,10 +10,6 @@ function formatDate(iso) {
   });
 }
 
-// Header.jsx only mounts this component while the modal is open (see
-// `{whatsNewOpen && <WhatsNewModal ... />}`), so this fetch naturally
-// happens fresh each time someone opens it — no extra code needed here,
-// and no wasted request on every page load for people who never click it.
 export default function WhatsNewModal({ onClose }) {
   const { data: items } = useContent("whats-new", FALLBACK_WHATS_NEW);
 
