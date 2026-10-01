@@ -32,7 +32,7 @@ export default function Hero() {
   }, []);
 
   return (
-    <section className="hero">
+    <section className="hero" style={{ paddingBottom: "10px" }}>
       {/* Background slideshow */}
       <div className="hero__background" aria-hidden="true">
         {heroImages.map((image, index) => (

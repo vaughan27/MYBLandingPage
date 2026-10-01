@@ -1,3 +1,8 @@
+import { useState } from "react";
+import SearchModal from "./SearchModal";
+import WhatsNewModal from "./WhatsNewModal";
+import { useWhatsNewUnread } from "../hooks/useWhatsNewUnread";
+
 function TwinPeakMark() {
   return (
     <img
@@ -9,6 +14,10 @@ function TwinPeakMark() {
 }
 
 export default function Header() {
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [whatsNewOpen, setWhatsNewOpen] = useState(false);
+  const { hasUnread, markSeen } = useWhatsNewUnread();
+
   return (
     <header className="site-header">
       <div className="container site-header__row">
@@ -21,7 +30,12 @@ export default function Header() {
         </a>
 
         <nav className="site-header__utility" aria-label="Utility links">
-          <a href="/search" aria-label="Search">
+          <button
+            type="button"
+            className="site-header__icon-btn"
+            aria-label="Search"
+            onClick={() => setSearchOpen(true)}
+          >
             <svg
               width="28"
               height="28"
@@ -36,14 +50,27 @@ export default function Header() {
                 strokeLinecap="round"
               />
             </svg>
-          </a>
+          </button>
 
-          <a href="/whats-new" className="site-header__whats-new">
-            <span className="site-header__whats-new-star">✦</span>            
+          <button
+            type="button"
+            className="site-header__whats-new"
+            onClick={() => {
+              setWhatsNewOpen(true);
+              markSeen(); // clears the badge the moment it's opened, not on close
+            }}
+          >
+            <span className="site-header__whats-new-star">✦</span>
             What's New
-          </a>
+            {hasUnread && (
+              <span className="site-header__whats-new-badge" aria-hidden="true" />
+            )}
+          </button>
         </nav>
       </div>
+
+      {searchOpen && <SearchModal onClose={() => setSearchOpen(false)} />}
+      {whatsNewOpen && <WhatsNewModal onClose={() => setWhatsNewOpen(false)} />}
     </header>
   );
 }

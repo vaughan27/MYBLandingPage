@@ -66,6 +66,28 @@ create table news_items (
     enabled      boolean not null default true
 );
 
+create table whats_new (
+    id          serial primary key,
+    title       text not null,
+    body        text not null,
+    active      boolean not null default true,
+    published_at timestamptz not null default now()
+);
+
+-- Generic, site-wide search index. Deliberately NOT tied to any one content
+-- type (quick_links, events, etc.) — that's the point: as you add more
+-- sections later, you add rows here too (by hand, or eventually a trigger
+-- that keeps it in sync), and the one /api/search endpoint covers all of
+-- them without new backend code.
+create table search_items (
+    id          serial primary key,
+    name        text not null,
+    href        text not null,
+    category    text,            -- e.g. 'system', 'policy', 'contact' — optional, for grouping results later
+    keywords    text,            -- extra search terms beyond the name, space-separated
+    active      boolean not null default true
+);
+
 create table newsletter_subscribers (
     id          serial primary key,
     email       text not null unique,
@@ -116,3 +138,19 @@ insert into events (title, description, starts_at, location) values
 insert into news_items (title, summary, url) values
   ('New ESS Portal Features Live', 'Leave requests and payslips now available on mobile.', '/news/ess-update'),
   ('MYB Marks 90 Years', 'A look back at nine decades of the group''s history.', '/news/90-years');
+
+insert into whats_new (title, body) values
+  ('New intranet, same shortcuts',
+   'We''ve refreshed the homepage. All your usual links are still here — just look nicer and load faster.');
+
+insert into search_items (name, href, category, keywords) values
+  ('IT Support Ticket', '/it-support', 'system', 'helpdesk it issue bug'),
+  ('ESS Portal', '/ess', 'system', 'leave payslip attendance self service'),
+  ('Telephone List', '/directory', 'contact', 'phone extension directory staff'),
+  ('Employee Handbook', '/handbook', 'policy', 'hr rules policy conduct'),
+  ('MYB Internal Site', '/internal', 'system', ''),
+  ('H.O. Meeting Room Booking', '/room-booking', 'system', 'room booking calendar meeting'),
+  ('Money Laundering Prevention & Control', '/aml', 'policy', 'aml compliance kyc'),
+  ('Document Management System', '/dms', 'system', 'dms documents files'),
+  ('Organizational Flowchart', '/org-chart', 'policy', 'org chart structure hierarchy'),
+  ('Pay by Link', '/pay', 'system', 'payment invoice link');

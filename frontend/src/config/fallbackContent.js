@@ -50,6 +50,15 @@ export const FALLBACK_NEWS = [
   },
 ];
 
+export const FALLBACK_WHATS_NEW = [
+  {
+    id: 1,
+    title: "New intranet, same shortcuts",
+    body: "We've refreshed the homepage. All your usual links are still here — just look nicer and load faster.",
+    published_at: new Date().toISOString(),
+  },
+];
+
 export const FALLBACK_GALLERY = [
   { id: 1, caption: "Head Office, Kuwait City", image_url: "" },
   { id: 2, caption: "Retail division showroom", image_url: "" },

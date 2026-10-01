@@ -9,7 +9,7 @@ export default function LatestNews() {
       <div className="container">
         <h2 className="section-heading">Latest news</h2>
         <ul className="latest-news__list">
-          {news.map((item) => (
+          {news.slice().reverse().map((item) => (
             <li key={item.id}>
               <a href={item.url || "#"}>{item.title}</a>
               {item.summary && <p>{item.summary}</p>}
