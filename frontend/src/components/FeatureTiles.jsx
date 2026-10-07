@@ -8,7 +8,7 @@ export default function FeatureTiles() {
   return (
     <section className="feature-tiles">
       <div className="container">
-        <h2 className="section-heading">Company systems</h2>
+        <h2 className="section-heading">Manuals</h2>
         <div className="feature-tiles__grid">
           {tiles.map((tile) => (
             <a key={tile.id} href={tile.href} className="feature-tiles__card"   

@@ -2,9 +2,9 @@ import { useEffect, useState } from "react";
 
 const heroImages = [
   "/assets/BehBehani.webp",
-  "/assets/porshe2.webp",
-  "/assets/scenery.webp",
 ];
+// "/assets/porshe2.webp",
+// "/assets/scenery.webp",
 
 export default function Hero() {
   const [currentImage, setCurrentImage] = useState(0);

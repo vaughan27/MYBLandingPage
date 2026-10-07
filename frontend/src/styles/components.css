@@ -1,15 +1,19 @@
 /* ---------- Header ---------- */
+
+.site-header {
+  background: var(--white);
+  border-bottom: 1px solid var(--slate-200);
+}
+
 .site-header__logo {
   display: block;
   width: 100px;
   height: auto;
 }
-.site-header {
-  background: var(--white);
-  border-bottom: 1px solid var(--slate-200);
-}
+
 .site-header__row {
   display: flex;
+  flex-direction: row;
   align-items: center;
   justify-content: space-between;
   height: 76px;
@@ -18,6 +22,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-2);
+  text-decoration: none;
 }
 .site-header__brand-text {
   display: flex;
@@ -36,13 +41,35 @@
   gap: var(--space-3);
   color: var(--navy-700);
 }
-.site-header__utility a { display: flex; align-items: center; }
+.site-header__utility a {
+  display: flex;
+  align-items: center;
+}
+.site-header__icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--navy-700);
+  cursor: pointer;
+  border-radius: 50%;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+.site-header__icon-btn:hover {
+  background: var(--slate-100);
+  color: var(--navy-900);
+}
 
 .site-header__whats-new {
   --whats-new-color: var(--bronze-500);
 
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 7px;
   padding: 8px 14px;
 
@@ -52,19 +79,35 @@
   text-decoration: none;
   font-weight: 600;
   color: var(--whats-new-color);
+  background: transparent;
+  white-space: nowrap;
+  cursor: pointer;
 
-  transition: all 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    opacity 0.2s ease,
+    background 0.2s ease;
 }
 
 .site-header__whats-new:hover {
   transform: translateY(-1px);
   opacity: 0.8;
+  background: rgba(0, 0, 0, 0.02);
 }
 
 .site-header__whats-new-star {
   font-size: 1.6rem;
   line-height: 1;
   animation: whatsNewPulse 1.8s ease-in-out infinite;
+}
+
+.site-header__whats-new-badge {
+  width: 7px;
+  height: 7px;
+  margin-left: 2px;
+  border-radius: 50%;
+  background: var(--bronze-500);
+  flex-shrink: 0;
 }
 
 @keyframes whatsNewPulse {
@@ -80,11 +123,102 @@
   }
 }
 
+
+/* ---------- Mobile Header ---------- */
+
+@media (max-width: 700px) {
+
+  .site-header__row {
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: center;
+
+    height: auto;
+
+    padding-top: 14px;
+    padding-bottom: 14px;
+  }
+
+  .site-header__brand {
+    justify-content: center;
+    width: 100%;
+  }
+
+  .site-header__logo {
+    width: 82px;
+  }
+
+  .site-header__brand-text {
+    text-align: left;
+  }
+
+  .site-header__utility {
+    width: 100%;
+
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+
+    gap: 14px;
+
+    margin-top: 12px;
+    padding-top: 10px;
+
+    border-top: 1px solid var(--slate-200);
+  }
+
+  .site-header__icon-btn {
+    width: 42px;
+    height: 42px;
+  }
+
+  .site-header__whats-new {
+    min-height: 40px;
+    padding: 7px 15px;
+  }
+
+  .site-header__whats-new-star {
+    font-size: 1.4rem;
+  }
+}
+
+
+/* ---------- Small Mobile ---------- */
+
+@media (max-width: 420px) {
+
+  .site-header__row {
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+
+  .site-header__logo {
+    width: 74px;
+  }
+
+  .site-header__brand-text strong {
+    font-size: 0.9rem;
+  }
+
+  .site-header__brand-text span {
+    font-size: 0.7rem;
+  }
+
+  .site-header__utility {
+    gap: 12px;
+  }
+
+  .site-header__whats-new {
+    padding: 7px 13px;
+    font-size: 0.9rem;
+  }
+}
 /* ---------- Hero ---------- */
 .hero {
   position: relative;
   min-height: 320px;
-  max-height: 400px;
+  max-height: 600px;
   display: flex;
   align-items: center;
   overflow: hidden;
@@ -224,7 +358,7 @@
   position: relative;
   z-index: 5;
   margin-top: 4rem;
-  padding: 0 1rem 1rem;
+  /* padding: 0 1rem 1rem; */
   /* background: var(--white); */
   /* border-bottom: 1px solid var(--slate-200); */
 }
@@ -572,7 +706,7 @@
 }
 
 .feature-tiles__card:hover .feature-tiles__icon {
-  transform: translateZ(35px) translateY(-3px) scale(1.05);
+  transform: translateZ(35px) translateY(-3px) scale(0);
 
   box-shadow:
     0 14px 24px rgba(0, 0, 0, 0.12),

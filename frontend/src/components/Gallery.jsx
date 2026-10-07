@@ -11,8 +11,8 @@ export default function Gallery() {
         <div className="gallery__grid">
           {images.map((img) => (
             <figure key={img.id} className="gallery__item">
-              {img.image_url ? (
-                <img src={img.image_url} alt={img.caption || ""} />
+              {img.img_url ? (
+                <img src={img.img_url} alt={img.caption || ""} />
               ) : (
                 <div className="gallery__placeholder" aria-hidden="true" />
               )}

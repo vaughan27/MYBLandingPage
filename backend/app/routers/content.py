@@ -15,7 +15,7 @@ def quick_links():
     with get_conn() as conn, conn.cursor() as cur:
         cur.execute(
             """
-            select id, label, href, icon, sort_order
+            select id, label, href, img_url, icon, sort_order
             from quick_links
             where enabled
             order by sort_order
@@ -29,7 +29,7 @@ def feature_tiles():
     with get_conn() as conn, conn.cursor() as cur:
         cur.execute(
             """
-            select id, title, href, icon, sort_order
+            select id, title, href, img_url, icon, sort_order
             from feature_tiles
             where enabled
             order by sort_order
@@ -43,7 +43,7 @@ def gallery():
     with get_conn() as conn, conn.cursor() as cur:
         cur.execute(
             """
-            select id, caption, image_url, sort_order
+            select id, caption, img_url, sort_order
             from gallery_images
             where enabled
             order by sort_order

@@ -1,156 +1,305 @@
--- =============================================================
--- MYB Intranet — schema
--- Plain Postgres, default "public" schema. FastAPI is the ONLY thing that
--- ever connects to this database, and it enforces what's public (the
--- `enabled` flag, future-only events, etc.) in its own queries — see
--- backend/app/routers/content.py. There is no separate read-only role or
--- view layer here; if you're looking for that, this project used to run
--- PostgREST in front of Postgres and it's been removed on purpose to cut
--- the moving parts down.
--- =============================================================
-
--- (using the default "public" schema — no separate schema needed)
-
--- One role for FastAPI. No PostgREST, no read-only role, no views — just
--- a normal app user with full rights on its own schema. Change the
--- password before deploying anywhere shared.
-create role myb_app login password 'myb_app_pw';
-grant usage on schema public to myb_app;
-alter default privileges in schema public grant select, insert, update, delete on tables to myb_app;
-alter default privileges in schema public grant usage, select on sequences to myb_app;
-
 -- ---------- CONTENT TABLES ----------
 
-create table quick_links (
-    id          serial primary key,
-    label       text not null,
-    href        text not null,
-    icon        text default 'link',
-    sort_order  int  not null default 0,
-    enabled     boolean not null default true
+CREATE TABLE quick_links (
+    id          serial PRIMARY KEY,
+    label       text NOT NULL,
+    href        text NOT NULL,
+    img_url     text,
+    icon        text DEFAULT 'link',
+    sort_order  int NOT NULL DEFAULT 0,
+    enabled     boolean NOT NULL DEFAULT true
 );
 
-create table feature_tiles (
-    id          serial primary key,
-    title       text not null,
-    href        text not null,
-    umg_url     text,
-    icon        text default 'doc',
-    sort_order  int  not null default 0,
-    enabled     boolean not null default true
+CREATE TABLE feature_tiles (
+    id          serial PRIMARY KEY,
+    title       text NOT NULL,
+    href        text NOT NULL,
+    img_url     text,
+    icon        text DEFAULT 'doc',
+    sort_order  int NOT NULL DEFAULT 0,
+    enabled     boolean NOT NULL DEFAULT true
 );
 
-create table gallery_images (
-    id          serial primary key,
+CREATE TABLE gallery_images (
+    id          serial PRIMARY KEY,
     caption     text,
-    image_url   text not null,
-    sort_order  int  not null default 0,
-    enabled     boolean not null default true
+    img_url     text NOT NULL,
+    sort_order  int NOT NULL DEFAULT 0,
+    enabled     boolean NOT NULL DEFAULT true
 );
 
-create table events (
-    id          serial primary key,
-    title       text not null,
+CREATE TABLE events (
+    id          serial PRIMARY KEY,
+    title       text NOT NULL,
     description text,
-    starts_at   timestamptz not null,
+    starts_at   timestamptz NOT NULL,
     location    text,
-    enabled     boolean not null default true
+    enabled     boolean NOT NULL DEFAULT true
 );
 
-create table news_items (
-    id           serial primary key,
-    title        text not null,
+CREATE TABLE news_items (
+    id           serial PRIMARY KEY,
+    title        text NOT NULL,
     summary      text,
     url          text,
-    published_at timestamptz not null default now(),
-    enabled      boolean not null default true
+    published_at timestamptz NOT NULL DEFAULT now(),
+    enabled      boolean NOT NULL DEFAULT true
 );
 
-create table whats_new (
-    id          serial primary key,
-    title       text not null,
-    body        text not null,
-    active      boolean not null default true,
-    published_at timestamptz not null default now()
+CREATE TABLE whats_new (
+    id          serial PRIMARY KEY,
+    title       text NOT NULL,
+    body        text NOT NULL,
+    url         text,
+    active      boolean NOT NULL DEFAULT true,
+    published_at timestamptz NOT NULL DEFAULT now()
 );
 
--- Generic, site-wide search index. Deliberately NOT tied to any one content
--- type (quick_links, events, etc.) — that's the point: as you add more
--- sections later, you add rows here too (by hand, or eventually a trigger
--- that keeps it in sync), and the one /api/search endpoint covers all of
--- them without new backend code.
-create table search_items (
-    id          serial primary key,
-    name        text not null,
-    href        text not null,
-    category    text,            -- e.g. 'system', 'policy', 'contact' — optional, for grouping results later
-    keywords    text,            -- extra search terms beyond the name, space-separated
-    active      boolean not null default true
+CREATE TABLE search_items (
+    id          serial PRIMARY KEY,
+    name        text NOT NULL,
+    href        text NOT NULL,
+    category    text,
+    keywords    text,
+    active      boolean NOT NULL DEFAULT true
 );
 
-create table newsletter_subscribers (
-    id          serial primary key,
-    email       text not null unique,
-    subscribed_at timestamptz not null default now()
+CREATE TABLE newsletter_subscribers (
+    id          serial PRIMARY KEY,
+    email       text NOT NULL UNIQUE,
+    subscribed_at timestamptz NOT NULL DEFAULT now()
 );
 
 -- ---------- ANALYTICS TABLES ----------
 
-create table visitors (
-    visitor_id   uuid primary key,
-    first_seen   timestamptz not null default now(),
-    last_seen    timestamptz not null default now(),
-    visit_count  int not null default 1
+CREATE TABLE visitors (
+    visitor_id   uuid PRIMARY KEY,
+    first_seen   timestamptz NOT NULL DEFAULT now(),
+    last_seen    timestamptz NOT NULL DEFAULT now(),
+    visit_count  int NOT NULL DEFAULT 1
 );
 
-create table page_views (
-    id          bigserial primary key,
-    visitor_id  uuid not null references visitors(visitor_id),
-    path        text not null,
-    referrer    text,
-    user_agent  text,
-    viewed_at   timestamptz not null default now()
-);
+-- ---------- SEED DATA ----------
 
-create index on page_views (viewed_at);
-create index on page_views (visitor_id);
+INSERT INTO quick_links
+    (label, href, icon, img_url, sort_order)
+VALUES
+    ('MYB Internal Site',
+     'http://192.0.15.99/#/d/home',
+     'doc',
+     '/assets/internal_site_2.webp',
+     1),
 
--- ---------- SEED DATA (safe to delete/replace) ----------
+    ('H.O. Meeting Room Booking',
+     'http://192.0.15.36/mrbs/day.php',
+     'meeting',
+     '/assets/meetingRoom.webp',
+     2),
 
-insert into quick_links (label, href, icon, sort_order) values
-  ('IT Support Ticket', '/it-support', 'ticket', 1),
-  ('ESS Portal', '/ess', 'user', 2),
-  ('Telephone List', '/directory', 'phone', 3),
-  ('Employee Handbook', '/handbook', 'book', 4);
+    ('IT Support Ticket',
+     'http://192.0.15.99:8055/assets/5aa69f40-3e08-490d-8eab-c20f7d4116e5',
+     'ticket',
+     '/assets/itSupport.webp',
+     3),
 
-insert into feature_tiles (title, href, icon, sort_order) values
-  ('MYB Internal Site', '/internal', 'doc', 1),
-  ('H.O. Meeting Room Booking', '/room-booking', 'meeting', 2),
-  ('Money Laundering Prevention & Control', '/aml', 'shield', 3),
-  ('Document Management System', '/dms', 'folder', 4),
-  ('Organizational Flowchart', '/org-chart', 'chart', 5),
-  ('Pay by Link', '/pay', 'card', 6);
+    ('ESS Portal',
+     'https://hrms.behbehanimotors.com/Ess',
+     'user',
+     '/assets/ESSPortal.webp',
+     4),
 
-insert into events (title, description, starts_at, location) values
-  ('Annual Staff Townhall', 'Company-wide update from senior management.', now() + interval '7 days', 'HQ Auditorium'),
-  ('Ramadan Working Hours Begin', 'Adjusted hours across all divisions.', now() + interval '20 days', 'All Branches');
+    ('ERP Portal',
+     'https://myb.oneerpcloud.com/oneerp/',
+     'database',
+     '/assets/oneERP.webp',
+     5),
 
-insert into news_items (title, summary, url) values
-  ('New ESS Portal Features Live', 'Leave requests and payslips now available on mobile.', '/news/ess-update'),
-  ('MYB Marks 90 Years', 'A look back at nine decades of the group''s history.', '/news/90-years');
+    ('POS System',
+     'https://myb-pos.eshopaid.com/mshopaid_myb/',
+     'shopping-cart',
+     '/assets/POS.webp',
+     6),
 
-insert into whats_new (title, body) values
-  ('New intranet, same shortcuts',
-   'We''ve refreshed the homepage. All your usual links are still here — just look nicer and load faster.');
+    ('Payment link',
+     'https://Luxury.moradbehbehani.com',
+     'card',
+     '/assets/paymentLink.webp',
+     7),
 
-insert into search_items (name, href, category, keywords) values
-  ('IT Support Ticket', '/it-support', 'system', 'helpdesk it issue bug'),
-  ('ESS Portal', '/ess', 'system', 'leave payslip attendance self service'),
-  ('Telephone List', '/directory', 'contact', 'phone extension directory staff'),
-  ('Employee Handbook', '/handbook', 'policy', 'hr rules policy conduct'),
-  ('MYB Internal Site', '/internal', 'system', ''),
-  ('H.O. Meeting Room Booking', '/room-booking', 'system', 'room booking calendar meeting'),
-  ('Money Laundering Prevention & Control', '/aml', 'policy', 'aml compliance kyc'),
-  ('Document Management System', '/dms', 'system', 'dms documents files'),
-  ('Organizational Flowchart', '/org-chart', 'policy', 'org chart structure hierarchy'),
-  ('Pay by Link', '/pay', 'system', 'payment invoice link');
+    ('Telephone List',
+     'http://192.0.15.99:8055/assets/a927b897-884a-4e3a-b817-bdb37d9158a1',
+     'phone',
+     '/assets/StaffDir.webp',
+     8),
+
+    ('Customer Wishlist',
+     'http://192.0.15.19/lead-enquiries',
+     'star',
+     '/assets/wishlist.webp',
+     9),
+
+    ('Workshop Portal',
+     'http://192.0.15.19/workshop/',
+     'shield',
+     '/assets/workshopTracker.webp',
+     10);
+
+
+INSERT INTO feature_tiles
+    (title, href, icon, img_url, sort_order)
+VALUES
+    ('Employee Handbook',
+     'http://192.0.15.99:8055/assets/c629a334-8179-4444-a416-de32bac11fcb',
+     'book',
+     '/assets/handbook.webp',
+     1),
+
+    ('ESS Portal Guide',
+     'http://192.0.15.99:8055/assets/a498407b-c2f4-4ed9-bccd-34648af26a21',
+     'user',
+     '/assets/ESS.webp',
+     2),
+
+    ('Money Laundering Prevention & Control',
+     'http://192.0.15.99:8055/assets/195a8c26-bef3-405b-9afc-4ac9c22390be',
+     'shield',
+     '/assets/money_laundering.webp',
+     3),
+
+    ('Document Management System',
+     'http://192.0.15.99:8055/assets/227edf31-a6f5-4606-a7c5-5dda9844a6c7',
+     'folder',
+     '/assets/document_management.webp',
+     4),
+
+    ('Organizational Flowchart',
+     'http://192.0.15.99:8055/assets/6b335a62-84e1-4f28-a89d-858afe00e9eb',
+     'chart',
+     '/assets/organizational_flow.webp',
+     5),
+
+    ('Pay by Link',
+     'http://192.0.15.99:8055/assets/d513c5cb-fde7-4aca-9ee2-b89ed5ad9d40',
+     'card',
+     '/assets/pay_by_link.webp',
+     6);
+
+
+INSERT INTO events
+    (title, description, starts_at, location)
+VALUES
+    ('Annual Staff Townhall',
+     'Company-wide update from senior management.',
+     now() + interval '7 days',
+     'HQ Auditorium'),
+
+    ('Ramadan Working Hours Begin',
+     'Adjusted hours across all divisions.',
+     now() + interval '20 days',
+     'All Branches');
+
+
+INSERT INTO news_items
+    (title, summary, url)
+VALUES
+    ('April Newsletter',
+     'Leave requests and payslips now available on mobile.',
+     '/news/ess-update'),
+
+    ('June Newsletter',
+     'A look back at nine decades of the group''s history.',
+     '/news/90-years');
+
+
+INSERT INTO whats_new
+    (title, body, url)
+VALUES
+    ('New intranet, same shortcuts',
+     'We''ve refreshed the homepage. All your usual links are still here — just look nicer and load faster.',
+     NULL);
+
+
+INSERT INTO search_items
+    (name, href, category, keywords)
+VALUES
+    -- Quick Links
+    ('MYB Internal Site',
+     'http://192.0.15.99/#/d/home',
+     'system',
+     'internal site home myb'),
+
+    ('H.O. Meeting Room Booking',
+     'http://192.0.15.36/mrbs/day.php',
+     'system',
+     'room booking calendar meeting conference room'),
+
+    ('IT Support Ticket',
+     'http://192.0.15.99:8055/assets/5aa69f40-3e08-490d-8eab-c20f7d4116e5',
+     'system',
+     'helpdesk it support issue ticket bug technical support'),
+
+    ('ESS Portal',
+     'https://hrms.behbehanimotors.com/Ess',
+     'system',
+     'leave payslip attendance employee self service ess hr'),
+
+    ('ERP Portal',
+     'https://myb.oneerpcloud.com/oneerp/',
+     'system',
+     'erp oneerp enterprise resource planning system'),
+
+    ('POS System',
+     'https://myb-pos.eshopaid.com/mshopaid_myb/',
+     'system',
+     'pos point of sale sales cashier retail shop'),
+
+    ('Payment Link',
+     'https://Luxury.moradbehbehani.com',
+     'system',
+     'payment payments online payment luxury invoice'),
+
+    ('Telephone List',
+     'http://192.0.15.99:8055/assets/a927b897-884a-4e3a-b817-bdb37d9158a1',
+     'contact',
+     'phone telephone extension directory staff contact'),
+
+    ('Customer Wishlist',
+     'http://192.0.15.19/lead-enquiries',
+     'system',
+     'customer wishlist leads enquiries customer requests'),
+
+    ('Workshop Portal',
+     'http://192.0.15.19/workshop/',
+     'system',
+     'workshop portal vehicle service repair workshop tracker'),
+
+    -- Feature Tiles
+    ('Employee Handbook',
+     'http://192.0.15.99:8055/assets/c629a334-8179-4444-a416-de32bac11fcb',
+     'policy',
+     'employee handbook hr rules policy conduct procedures'),
+
+    ('ESS Portal Guide',
+     'http://192.0.15.99:8055/assets/a498407b-c2f4-4ed9-bccd-34648af26a21',
+     'guide',
+     'ess portal guide employee self service instructions help'),
+
+    ('Money Laundering Prevention & Control',
+     'http://192.0.15.99:8055/assets/195a8c26-bef3-405b-9afc-4ac9c22390be',
+     'policy',
+     'aml anti money laundering compliance kyc money laundering prevention'),
+
+    ('Document Management System',
+     'http://192.0.15.99:8055/assets/227edf31-a6f5-4606-a7c5-5dda9844a6c7',
+     'system',
+     'dms document management documents files records'),
+
+    ('Organizational Flowchart',
+     'http://192.0.15.99:8055/assets/6b335a62-84e1-4f28-a89d-858afe00e9eb',
+     'information',
+     'organization organizational flowchart org chart structure hierarchy departments'),
+
+    ('Pay by Link',
+     'http://192.0.15.99:8055/assets/d513c5cb-fde7-4aca-9ee2-b89ed5ad9d40',
+     'system',
+     'pay payment payment link invoice online payment');
