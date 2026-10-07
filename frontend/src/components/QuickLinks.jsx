@@ -33,6 +33,7 @@ export default function QuickLinks() {
             <a
               key={link.id}
               href={link.href}
+              target="_blank"
               className="feature-tiles__card"
               style={{ backgroundImage: `url(${link.img_url})` }}
             >

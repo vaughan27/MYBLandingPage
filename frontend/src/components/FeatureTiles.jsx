@@ -11,7 +11,7 @@ export default function FeatureTiles() {
         <h2 className="section-heading">Manuals</h2>
         <div className="feature-tiles__grid">
           {tiles.map((tile) => (
-            <a key={tile.id} href={tile.href} className="feature-tiles__card"   
+            <a key={tile.id} href={tile.href} target="_blank" className="feature-tiles__card"   
             style={{ backgroundImage: `url(${tile.img_url})` }}
             >
               <Icon name={tile.icon} size={26} className="feature-tiles__icon" />

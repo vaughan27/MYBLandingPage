@@ -11,7 +11,7 @@ export default function LatestNews() {
         <ul className="latest-news__list">
           {news.slice().reverse().map((item) => (
             <li key={item.id}>
-              <a href={item.url || "#"}>{item.title}</a>
+              <a href={item.url || "#"} target="_blank">{item.title}</a>
               {item.summary && <p>{item.summary}</p>}
             </li>
           ))}
