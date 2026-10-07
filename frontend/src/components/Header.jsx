@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import SearchModal from "./SearchModal";
 import WhatsNewModal from "./WhatsNewModal";
 import { useWhatsNewUnread } from "../hooks/useWhatsNewUnread";
@@ -17,6 +17,13 @@ export default function Header() {
   const [searchOpen, setSearchOpen] = useState(false);
   const [whatsNewOpen, setWhatsNewOpen] = useState(false);
   const { hasUnread, markSeen } = useWhatsNewUnread();
+
+  useEffect(() => {
+    if (hasUnread) {
+      setWhatsNewOpen(true);
+      markSeen();
+    }
+  }, [hasUnread, markSeen]);
 
   return (
     <header className="site-header">
@@ -57,14 +64,14 @@ export default function Header() {
             className="site-header__whats-new"
             onClick={() => {
               setWhatsNewOpen(true);
-              markSeen(); // clears the badge the moment it's opened, not on close
+              // markSeen(); // clears the badge the moment it's opened, not on close
             }}
           >
             <span className="site-header__whats-new-star">✦</span>
             What's New
-            {hasUnread && (
+            {/* {hasUnread && (
               <span className="site-header__whats-new-badge" aria-hidden="true" />
-            )}
+            )} */}
           </button>
         </nav>
       </div>

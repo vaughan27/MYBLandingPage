@@ -3,13 +3,6 @@ from ..database import get_conn
 
 router = APIRouter(prefix="/api/content")
 
-# Each of these is what a PostgREST "*_public" view used to do — enforced
-# here in the SQL instead. Same filtering rules as before:
-#   - only enabled=true rows are ever returned
-#   - events additionally only show today-or-later
-#   - news is capped at the most recent 20
-
-
 @router.get("/quick-links")
 def quick_links():
     with get_conn() as conn, conn.cursor() as cur:

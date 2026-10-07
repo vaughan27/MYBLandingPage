@@ -13,7 +13,7 @@ DATABASE_URL = os.getenv(
 )
 
 # Dashboard configuration
-DASHBOARD_PATH = os.getenv("DASHBOARD_PATH", "/ops/pulse-9f21")
+DASHBOARD_PATH = os.getenv("DASHBOARD_PATH", "/dashboard-2709")
 
 DASHBOARD_KEY = os.getenv(
     "DASHBOARD_KEY",

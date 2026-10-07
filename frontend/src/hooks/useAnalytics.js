@@ -12,7 +12,8 @@ export function useAnalytics(path = window.location.pathname) {
       method: "POST",
       credentials: "include",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ path, referrer: document.referrer || null }),
+      //referrer is the previous page from which the request came
+      body: JSON.stringify({ path, referrer: document.referrer || null }), 
     }).catch(() => {
       /* analytics failures should never break the page */
     });

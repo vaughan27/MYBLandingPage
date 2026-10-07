@@ -62,7 +62,8 @@ export const FALLBACK_WHATS_NEW = [
     title: "New intranet, same shortcuts",
     body: "We've refreshed the homepage. All your usual links are still here — just look nicer and load faster.",
     url: "",
-    published_at: new Date().toISOString(),
+    // published_at: new Date().toISOString(),
+    published_at: "2026-10-06T12:00:00.000Z",
   },
 ];
 
