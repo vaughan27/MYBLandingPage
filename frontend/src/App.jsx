@@ -5,10 +5,12 @@ import { COMPONENT_REGISTRY } from "./components/registry";
 import { useAnalytics } from "./hooks/useAnalytics";
 import { DASHBOARD_PATH } from "./config/dashboard";
 import AnalyticsDashboard from "./pages/AnalyticsDashboard";
+import { useVersionCheck } from "./hooks/useVersionCheck";
 
 export default function App() {
   useAnalytics();
-
+  useVersionCheck();
+  
   // No router library — this is a single-page landing site plus one hidden
   // path. A simple pathname check is enough and avoids pulling in a router
   // for what is otherwise a static page. Swap in react-router if the site
