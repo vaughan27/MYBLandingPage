@@ -17,3 +17,10 @@ cd frontend && npm install && npm run dev             # 4. Vite on :5173
 git rm --cached postgrest.exe
 git add .gitignore
 git commit -m "Ignore executable files"
+
+--python--
+uv python list / uv python list --all-versions
+uv python install 3.11
+uv python pin 3.11
+uv run python --version
+uv venv --python 3.11 --clear
