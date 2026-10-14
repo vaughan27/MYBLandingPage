@@ -706,7 +706,7 @@
 }
 
 .feature-tiles__card:hover .feature-tiles__icon {
-  transform: translateZ(35px) translateY(-3px) scale(0);
+  transform: translateZ(35px) translateY(-3px) scale(1.5);
 
   box-shadow:
     0 14px 24px rgba(0, 0, 0, 0.12),

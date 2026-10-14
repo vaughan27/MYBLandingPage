@@ -64,7 +64,7 @@ export default function Hero() {
         </p>
       </div>
 
-      <svg
+      {/* <svg
         className="hero__ridge"
         viewBox="0 0 1440 80"
         preserveAspectRatio="none"
@@ -91,7 +91,7 @@ export default function Hero() {
           "
           fill="var(--sand-50)"
         />
-      </svg>
+      </svg> */}
 
     </section>
   );
