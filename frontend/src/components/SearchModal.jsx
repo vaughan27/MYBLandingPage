@@ -64,7 +64,10 @@ export default function SearchModal({ onClose }) {
         <ul className="search-modal__results">
           {results.map((item) => (
             <li key={item.id}>
-              <a href={item.href} onClick={onClose}>
+              <a href={item.href} 
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={onClose}>
                 <span>{item.name}</span>
                 {item.category && (
                   <span className="search-modal__category">{item.category}</span>

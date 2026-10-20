@@ -1,49 +1,42 @@
 import { useEffect, useState } from "react";
 
-const heroImages = [
-  "/assets/BehBehani.webp",
-];
-// "/assets/porshe2.webp",
-// "/assets/scenery.webp",
+const DAY_IMAGE = "/assets/BehBehani.webp";
+const NIGHT_IMAGE = "/assets/BehBehaniNight.webp";
+
+function getHeroImage() {
+  const hour = new Date().getHours();
+
+  // Day: 6:00 AM to 5:59 PM
+  // Night: 6:00 PM to 5:59 AM
+  return hour >= 6 && hour < 18 ? DAY_IMAGE : NIGHT_IMAGE;
+}
 
 export default function Hero() {
-  const [currentImage, setCurrentImage] = useState(0);
+  const [currentImage, setCurrentImage] = useState(getHeroImage);
 
   useEffect(() => {
-    // Preload images after the first image has loaded.
-    const preloadImages = heroImages.slice(1).map((src) => {
-      const img = new Image();
-      img.src = src;
-      return img;
-    });
-
-    const interval = setInterval(() => {
-      setCurrentImage((current) => (current + 1) % heroImages.length);
-    }, 6000);
-
-    return () => {
-      clearInterval(interval);
-
-      // Prevent unused Image objects from being retained.
-      preloadImages.forEach((img) => {
-        img.src = "";
-      });
+    // Update the image if the day/night period changes
+    // while the page remains open.
+    const updateImage = () => {
+      setCurrentImage(getHeroImage());
     };
+
+    updateImage();
+
+    // Check every minute.
+    const interval = setInterval(updateImage, 60000);
+
+    return () => clearInterval(interval);
   }, []);
 
   return (
     <section className="hero" style={{ paddingBottom: "10px" }}>
-      {/* Background slideshow */}
+      {/* Background image */}
       <div className="hero__background" aria-hidden="true">
-        {heroImages.map((image, index) => (
-          <div
-            key={image}
-            className={`hero__background-image ${
-              index === currentImage ? "is-active" : ""
-            }`}
-            style={{ backgroundImage: `url("${image}")` }}
-          />
-        ))}
+        <div
+          className="hero__background-image is-active"
+          style={{ backgroundImage: `url("${currentImage}")` }}
+        />
 
         {/* Dark translucent layer */}
         <div className="hero__overlay" />

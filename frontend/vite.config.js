@@ -5,7 +5,7 @@ import versionPlugin from "./vite-plugin-version.js";
 export default defineConfig({
   plugins: [react(), versionPlugin()],
   server: {
-    port: 5173,
+    port: 5174,
     proxy: {
       "/api": { target: "http://localhost:8004", changeOrigin: true },
     },

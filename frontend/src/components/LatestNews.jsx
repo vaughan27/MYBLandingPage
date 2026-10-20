@@ -7,7 +7,13 @@ export default function LatestNews() {
   return (
     <section className="latest-news">
       <div className="container">
+        <span className="eyebrow">
+          MYB UPDATES
+        </span>
         <h2 className="section-heading">Latest news</h2>
+        <p className="title-description">
+          Get a scoop of the latest and most exciting happenings of the company.
+        </p>
         <ul className="latest-news__list">
           {news.slice().reverse().map((item) => (
             <li key={item.id}>

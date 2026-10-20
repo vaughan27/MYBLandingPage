@@ -67,7 +67,7 @@ def news():
             select id, title, summary, url, published_at
             from news_items
             where enabled
-            order by published_at desc
+            order by published_at asc
             limit 20
             """
         )

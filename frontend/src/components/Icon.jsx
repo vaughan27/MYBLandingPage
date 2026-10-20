@@ -16,7 +16,8 @@ import {
   Database,
   ShoppingCart,
   Star,
-  Wrench
+  Wrench,
+  Newspaper
 } from "lucide-react";
 
 const ICONS = {
@@ -38,6 +39,7 @@ const ICONS = {
   "shopping-cart": ShoppingCart,
   star: Star,
   wrench: Wrench,
+  newspaper: Newspaper,
 };
 
 export default function Icon({

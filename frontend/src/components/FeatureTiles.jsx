@@ -3,21 +3,77 @@ import { FALLBACK_FEATURE_TILES } from "../config/fallbackContent";
 import Icon from "./Icon";
 
 export default function FeatureTiles() {
-  const { data: tiles } = useContent("feature-tiles", FALLBACK_FEATURE_TILES);
+  const { data: tiles } = useContent(
+    "feature-tiles",
+    FALLBACK_FEATURE_TILES
+  );
 
   return (
-    <section className="feature-tiles">
+    <section className="feature-tiles manuals-section">
       <div className="container">
-        <h2 className="section-heading">Manuals</h2>
-        <div className="feature-tiles__grid">
-          {tiles.map((tile) => (
-            <a key={tile.id} href={tile.href} target="_blank" className="feature-tiles__card"   
-            style={{ backgroundImage: `url(${tile.img_url})` }}
-            >
-              <Icon name={tile.icon} size={26} className="feature-tiles__icon" />
-              <span>{tile.title}</span>
-            </a>
-          ))}
+        <div className="manuals-header">
+          <div>
+            <span className="eyebrow">
+              MYB KNOWLEDGE CENTRE
+            </span>
+
+            <h2 className="section-heading">
+              Manuals & Resources
+            </h2>
+
+            <p className="title-description">
+              Guides, procedures and reference documents for your work.
+            </p>
+          </div>
+
+          <div className="manuals-count">
+            <span>{tiles.length} resources</span>
+          </div>
+        </div>
+
+        <div className="feature-tiles__grid manuals-grid">
+          {tiles.map((tile) => {
+            const href = tile.href || "";
+            const isPdf = /\.pdf(?:$|[?#])/i.test(href);
+
+            return (
+              <a
+                key={tile.id}
+                href={href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="feature-tiles__card manual-card"
+              >
+                <div className="manual-card__top">
+                  <div
+                    className={`manual-card__file-icon`}
+                  >
+                    <Icon
+                      name={tile.icon || "file"}
+                      size={27}
+                    />
+
+                    {isPdf && (
+                      <span className="manual-card__pdf-tag">
+                        PDF
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                <div className="manual-card__content">
+                  <span className="manual-card__title">
+                    {tile.title}
+                  </span>
+
+                  <span className="manual-card__meta">
+                    {isPdf ? "PDF DOCUMENT" : "DOCUMENT & RESOURCE"}
+                  </span>
+                </div>
+
+              </a>
+            );
+          })}
         </div>
       </div>
     </section>
