@@ -11,7 +11,7 @@ Copy its contents into the Query Tool, then click the Execute ▶ button.
 
 cd backend && uv sync && uv run uvicorn app.main:app --reload --port 8004   # 3. API on :8004
 
-cd frontend && npm install && npm run dev             # 4. Vite on :5173
+cd frontend && npm install && npm run dev  || npm run dev -- --host          # 4. Vite on :5173
 
 --git--
 git rm --cached postgrest.exe

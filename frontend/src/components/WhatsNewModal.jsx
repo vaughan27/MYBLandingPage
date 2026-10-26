@@ -22,7 +22,16 @@ export default function WhatsNewModal({ onClose }) {
           {items.map((item) => (
             <li key={item.id}>
               <div className="whats-new-modal__item-head">
-                <h3>{item.title}</h3>
+                <h3>
+                  {item.url ? (
+                    <a href={item.url} 
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >{item.title}</a>
+                  ) : (
+                    item.title
+                  )}
+                </h3>
                 {item.published_at && (
                   <span className="whats-new-modal__date">
                     {formatDate(item.published_at)}

@@ -78,11 +78,11 @@ def whats_new():
     with get_conn() as conn, conn.cursor() as cur:
         cur.execute(
             """
-            select id, title, body, published_at
+            select id, title, body, url, published_at
             from whats_new
             where active
             order by published_at desc
-            limit 20
+            limit 5
             """
         )
         return cur.fetchall()

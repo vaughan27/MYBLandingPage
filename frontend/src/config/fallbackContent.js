@@ -42,18 +42,7 @@ export const FALLBACK_EVENTS = [
 ];
 
 export const FALLBACK_NEWS = [
-  {
-    id: 1,
-    title: "April Newsletter",
-    summary: "Leave requests and payslips now available on mobile.",
-    url: "/news/ess-update",
-  },
-  {
-    id: 2,
-    title: "June Newsletter",
-    summary: "A look back at nine decades of the group's history.",
-    url: "/news/90-years",
-  },
+  
 ];
 
 export const FALLBACK_WHATS_NEW = [
