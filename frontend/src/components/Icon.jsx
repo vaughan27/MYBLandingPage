@@ -18,7 +18,7 @@ import {
   Star,
   Wrench,
   Newspaper,
-  Gravel,
+  Gavel,
 } from "lucide-react";
 
 const ICONS = {
@@ -41,7 +41,7 @@ const ICONS = {
   star: Star,
   wrench: Wrench,
   newspaper: Newspaper,
-  gravel: Gravel,
+  gavel: Gavel,
 };
 
 export default function Icon({
