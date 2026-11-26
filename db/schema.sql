@@ -5,7 +5,7 @@ CREATE TABLE quick_links (
     label       text NOT NULL,
     href        text NOT NULL,
     img_url     text,
-    icon        text DEFAULT 'link',
+    icon        text NOT NULL DEFAULT 'link',
     sort_order  int NOT NULL DEFAULT 0,
     enabled     boolean NOT NULL DEFAULT true
 );
@@ -15,7 +15,7 @@ CREATE TABLE feature_tiles (
     title       text NOT NULL,
     href        text NOT NULL,
     img_url     text,
-    icon        text DEFAULT 'doc',
+    icon        text NOT NULL DEFAULT 'link',
     sort_order  int NOT NULL DEFAULT 0,
     enabled     boolean NOT NULL DEFAULT true
 );
@@ -78,6 +78,27 @@ CREATE TABLE visitors (
     last_seen    timestamptz NOT NULL DEFAULT now(),
     visit_count  int NOT NULL DEFAULT 1
 );
+
+-- ---------- STAFF ACCESS ----------
+
+CREATE TABLE staff_users (
+    id            serial PRIMARY KEY,
+    username      text NOT NULL UNIQUE,
+    password_hash text NOT NULL,
+    role          text NOT NULL CHECK (role IN ('manager', 'admin')),
+    active        boolean NOT NULL DEFAULT true,
+    created_at    timestamptz NOT NULL DEFAULT now()
+);
+
+CREATE TABLE staff_sessions (
+    id         bigserial PRIMARY KEY,
+    user_id    int NOT NULL REFERENCES staff_users(id) ON DELETE CASCADE,
+    token_hash text NOT NULL UNIQUE,
+    expires_at timestamptz NOT NULL,
+    created_at timestamptz NOT NULL DEFAULT now()
+);
+
+CREATE INDEX staff_sessions_expiry_idx ON staff_sessions (expires_at);
 
 -- ---------- SEED DATA ----------
 

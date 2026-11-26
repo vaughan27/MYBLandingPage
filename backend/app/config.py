@@ -33,3 +33,11 @@ CORS_ORIGINS = [
     ).split(",")
     if origin.strip()
 ]
+
+STAFF_COOKIE_NAME = "myb_staff_session"
+STAFF_COOKIE_SECURE = os.getenv("STAFF_COOKIE_SECURE", "false").lower() == "true"
+STAFF_SESSION_HOURS = 8
+STAFF_UPLOAD_DIR = Path(os.getenv("STAFF_UPLOAD_DIR", str(BACKEND_DIR / "uploads"))).resolve()
+MAX_UPLOAD_BYTES = 25 * 1024 * 1024
+BOOTSTRAP_ADMIN_USERNAME = os.getenv("BOOTSTRAP_ADMIN_USERNAME", "").strip().lower()
+BOOTSTRAP_ADMIN_PASSWORD = os.getenv("BOOTSTRAP_ADMIN_PASSWORD", "")

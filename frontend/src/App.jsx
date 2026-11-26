@@ -6,10 +6,15 @@ import { useAnalytics } from "./hooks/useAnalytics";
 import { DASHBOARD_PATH } from "./config/dashboard";
 import AnalyticsDashboard from "./pages/AnalyticsDashboard";
 import { useVersionCheck } from "./hooks/useVersionCheck";
+import StaffPortal from "./pages/StaffPortal";
 
 export default function App() {
   useAnalytics();
   useVersionCheck();
+
+  if (window.location.pathname === "/staff") {
+    return <StaffPortal />;
+  }
   
   // No router library — this is a single-page landing site plus one hidden
   // path. A simple pathname check is enough and avoids pulling in a router

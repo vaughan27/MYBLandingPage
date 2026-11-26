@@ -42,8 +42,8 @@ cd backend
 uv sync                # creates .venv and installs deps from pyproject.toml
 DATABASE_URL="postgresql://myb_app:myb_app_pw@localhost:5432/myb" \
 DASHBOARD_KEY="change-me" \
-CORS_ORIGINS="http://localhost:5173" \
-uv run uvicorn app.main:app --reload --port 8000
+CORS_ORIGINS="http://localhost:5174" \
+uv run uvicorn app.main:app --reload --port 8004
 ```
 `uv sync` reads `pyproject.toml` and gives you a `.venv` + `uv.lock` — no `pip install`, no requirements.txt to keep in sync by hand.
 
@@ -53,9 +53,40 @@ cd frontend
 npm install
 npm run dev
 ```
-Vite's dev proxy (`vite.config.js`) forwards `/api` → `:8000`. That's the only proxy needed now — there's no separate `:3001` to configure.
+Vite's dev proxy (`vite.config.js`) forwards `/api` → `:8004`.
 
-Visit `http://localhost:5173`. The hidden dashboard is at whatever `DASHBOARD_PATH` you set (default `/ops/pulse-9f21`, see `backend/app/config.py` and `frontend/src/config/dashboard.js` — **keep those two in sync**), gated further by the `DASHBOARD_KEY` env var above.
+Visit `http://localhost:5174`. The hidden dashboard is at `DASHBOARD_PATH` (default `/dashboard-2709`, see `backend/app/config.py` and `frontend/src/config/dashboard.js` — **keep those two in sync**), gated further by the `DASHBOARD_KEY` env var above.
+
+### Staff login and content management
+
+The landing page header has a **Staff Login** link. Staff accounts use a
+database-backed, HTTP-only session cookie; there is no public registration.
+Set these in `backend/.env` before starting the API to create the first admin
+account (only created when no admin exists):
+
+```env
+BOOTSTRAP_ADMIN_USERNAME=admin
+BOOTSTRAP_ADMIN_PASSWORD=use-a-long-unique-password
+```
+
+The password must be at least 8 characters. Sign in at `/staff`. Admins can
+create manager/admin accounts, change roles, deactivate accounts, and delete
+content. Managers can view and add/edit What's New entries, company system
+links, and manuals/resources. New What's New entries receive the server's
+current timestamp. Manuals are uploaded as PDFs and stored under
+`backend/uploads/` by default (25 MB maximum); set `STAFF_UPLOAD_DIR` to a
+persistent storage path before deployment if application files are ephemeral.
+Set `STAFF_COOKIE_SECURE=true` when the site is served over HTTPS. In production,
+route `/uploads/*` to the FastAPI service (Vite's development proxy already does this).
+
+For an existing database, apply the one-time migration before starting the new
+backend:
+
+```bash
+psql -d myb -f db/migrations/001_staff_management.sql
+```
+
+For a fresh database, `db/schema.sql` includes the staff tables.
 
 ### Running everything at once
 Three terminal tabs (down from four). If that's annoying, a simple `Procfile` + `honcho`/`overmind`, or a short shell script with `&` and a trap to kill on exit, works well — happy to add one if you want it.

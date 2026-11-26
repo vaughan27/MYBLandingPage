@@ -16,7 +16,15 @@ function TwinPeakMark() {
 export default function Header() {
   const [searchOpen, setSearchOpen] = useState(false);
   const [whatsNewOpen, setWhatsNewOpen] = useState(false);
+  const [staffUser, setStaffUser] = useState(null);
   const { hasUnread, markSeen } = useWhatsNewUnread();
+
+  useEffect(() => {
+    fetch("/api/staff/me", { credentials: "include" })
+      .then((response) => response.ok ? response.json() : null)
+      .then(setStaffUser)
+      .catch(() => {});
+  }, []);
 
   useEffect(() => {
     if (hasUnread) {
@@ -73,6 +81,9 @@ export default function Header() {
               <span className="site-header__whats-new-badge" aria-hidden="true" />
             )} */}
           </button>
+          <a className="site-header__staff-login" href="/staff">
+            {staffUser ? "Staff Portal" : "Staff Login"}
+          </a>
         </nav>
       </div>
 
