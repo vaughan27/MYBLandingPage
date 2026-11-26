@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 const CONTENT_TYPES = {
   "What's New": { key: "whats-new", fields: ["title", "body", "url", "active"] },
@@ -32,6 +32,7 @@ export default function StaffPortal() {
   const [users, setUsers] = useState([]);
   const [newUser, setNewUser] = useState({ username: "", password: "", role: "manager" });
   const [tab, setTab] = useState("content");
+  const itemsRequest = useRef(0);
 
   const loadUser = useCallback(async () => {
     try { setUser(await api("/staff/me")); } catch { setUser(null); }
@@ -39,13 +40,15 @@ export default function StaffPortal() {
 
   const loadItems = useCallback(async () => {
     if (!user) return;
+    const requestId = ++itemsRequest.current;
     try {
       const data = await api(`/staff/${CONTENT_TYPES[type].key}`);
+      if (requestId !== itemsRequest.current) return;
       setItems(data);
       setSelected(null);
       setDraft(emptyDraft(type));
       setError("");
-    } catch (err) { setError(err.message); }
+    } catch (err) { if (requestId === itemsRequest.current) setError(err.message); }
   }, [type, user]);
 
   useEffect(() => { loadUser(); }, [loadUser]);
@@ -63,7 +66,8 @@ export default function StaffPortal() {
   }
 
   function chooseType(next) {
-    setType(next); setSelected(null); setDraft(emptyDraft(next)); setMessage(""); setError("");
+    itemsRequest.current += 1;
+    setType(next); setItems([]); setSelected(null); setDraft(emptyDraft(next)); setMessage(""); setError("");
   }
 
   function editItem(item) {
@@ -164,7 +168,7 @@ export default function StaffPortal() {
               <div className="staff-section-select">{Object.keys(CONTENT_TYPES).map((name) => <button className={type === name ? "is-active" : ""} key={name} onClick={() => chooseType(name)}>{name}</button>)}</div>
               <div className="staff-items">
                 {items.map((item) => <article className={`staff-item ${selected?.id === item.id ? "is-selected" : ""}`} key={item.id}>
-                  <button className="staff-item-main" onClick={() => editItem(item)}><strong>{item.title || item.label}</strong><span>{type === "What's New" ? (item.active ? "Active" : "Inactive") : (item.enabled ? "Enabled" : "Disabled")}{type === "Manuals & resources" ? ` · ${item.href.split("/").pop()}` : ""}</span></button>
+                  <button className="staff-item-main" onClick={() => editItem(item)}><strong>{item.title || item.label}</strong><span>{type === "What's New" ? (item.active ? "Active" : "Inactive") : (item.enabled ? "Enabled" : "Disabled")}{type === "Manuals & resources" && item.href ? ` · ${item.href.split("/").pop()}` : ""}</span></button>
                   <button className="staff-text-button" onClick={() => editItem(item)}>Edit</button>
                   {user.role === "admin" && <button className="staff-delete" onClick={() => deleteItem(item)}>Delete</button>}
                 </article>)}
