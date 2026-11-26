@@ -82,7 +82,7 @@ export default function Header() {
             )} */}
           </button>
           <a className="site-header__staff-login" href="/staff">
-            {staffUser ? "Staff Portal" : "Staff Login"}
+            {staffUser ? "Staff" : "Staff Login"}
           </a>
         </nav>
       </div>

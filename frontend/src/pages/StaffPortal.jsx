@@ -153,7 +153,7 @@ export default function StaffPortal() {
     <main className="staff-page">
       <div className="staff-shell">
         <header className="staff-topbar">
-          <div><a className="staff-back" href="/">← home</a><p className="eyebrow">STAFF PORTAL · {user.role.toUpperCase()}</p><h1>Content manager</h1></div>
+          <div><a className="staff-back" href="/">← home</a><p className="eyebrow">STAFF · {user.role.toUpperCase()}</p><h1>Content manager</h1></div>
           <button className="staff-secondary" onClick={signOut}>Sign out</button>
         </header>
         <nav className="staff-tabs">
