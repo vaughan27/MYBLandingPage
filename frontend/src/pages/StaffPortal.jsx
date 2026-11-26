@@ -66,6 +66,7 @@ export default function StaffPortal() {
   }
 
   function chooseType(next) {
+    if (next === type) return;
     itemsRequest.current += 1;
     setType(next); setItems([]); setSelected(null); setDraft(emptyDraft(next)); setMessage(""); setError("");
   }
