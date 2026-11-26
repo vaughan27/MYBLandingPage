@@ -78,6 +78,8 @@ current timestamp. Manuals are uploaded as PDFs and stored under
 persistent storage path before deployment if application files are ephemeral.
 Set `STAFF_COOKIE_SECURE=true` when the site is served over HTTPS. In production,
 route `/uploads/*` to the FastAPI service (Vite's development proxy already does this).
+Signed-in staff can change their password from the Staff Portal using their
+current password; changing it signs out their other active sessions.
 
 For an existing database, apply the one-time migration before starting the new
 backend:

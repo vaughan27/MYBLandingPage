@@ -33,6 +33,10 @@ export default function StaffPortal() {
   const [newUser, setNewUser] = useState({ username: "", password: "", role: "manager" });
   const [tab, setTab] = useState("content");
   const itemsRequest = useRef(0);
+  const [passwordOpen, setPasswordOpen] = useState(false);
+  const [passwordDraft, setPasswordDraft] = useState({ current_password: "", new_password: "", confirm_password: "" });
+  const [passwordMessage, setPasswordMessage] = useState("");
+  const [passwordError, setPasswordError] = useState("");
 
   const loadUser = useCallback(async () => {
     try { setUser(await api("/staff/me")); } catch { setUser(null); }
@@ -63,6 +67,23 @@ export default function StaffPortal() {
   async function signOut() {
     await api("/staff/logout", { method: "POST" });
     setUser(null); setItems([]); setUsers([]);
+  }
+
+  async function changePassword(event) {
+    event.preventDefault(); setPasswordError(""); setPasswordMessage("");
+    if (passwordDraft.new_password !== passwordDraft.confirm_password) {
+      setPasswordError("The new passwords do not match.");
+      return;
+    }
+    try {
+      await api("/staff/password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ current_password: passwordDraft.current_password, new_password: passwordDraft.new_password }),
+      });
+      setPasswordDraft({ current_password: "", new_password: "", confirm_password: "" });
+      setPasswordMessage("Password changed. Other sessions have been signed out.");
+    } catch (err) { setPasswordError(err.message); }
   }
 
   function chooseType(next) {
@@ -155,8 +176,22 @@ export default function StaffPortal() {
       <div className="staff-shell">
         <header className="staff-topbar">
           <div><a className="staff-back" href="/">← home</a><p className="eyebrow">STAFF · {user.role.toUpperCase()}</p><h1>Content manager</h1></div>
-          <button className="staff-secondary" onClick={signOut}>Sign out</button>
+          <div className="staff-account-actions">
+            <button className="staff-secondary" onClick={() => { setPasswordOpen((open) => !open); setPasswordError(""); setPasswordMessage(""); }}>Change password</button>
+            <button className="staff-secondary" onClick={signOut}>Sign out</button>
+          </div>
         </header>
+        {passwordOpen && <section className="staff-panel staff-password-panel">
+          <p className="eyebrow">ACCOUNT SECURITY</p><h2>Change password</h2>
+          <form className="staff-password-form" onSubmit={changePassword}>
+            <label>Current password<input type="password" autoComplete="current-password" value={passwordDraft.current_password} onChange={(e) => setPasswordDraft({ ...passwordDraft, current_password: e.target.value })} required /></label>
+            <label>New password<input type="password" autoComplete="new-password" minLength="8" value={passwordDraft.new_password} onChange={(e) => setPasswordDraft({ ...passwordDraft, new_password: e.target.value })} required /></label>
+            <label>Confirm new password<input type="password" autoComplete="new-password" minLength="8" value={passwordDraft.confirm_password} onChange={(e) => setPasswordDraft({ ...passwordDraft, confirm_password: e.target.value })} required /></label>
+            <button className="staff-primary">Update password</button>
+          </form>
+          {passwordError && <p className="staff-error">{passwordError}</p>}
+          {passwordMessage && <p className="staff-success">{passwordMessage}</p>}
+        </section>}
         <nav className="staff-tabs">
           <button className={tab === "content" ? "is-active" : ""} onClick={() => setTab("content")}>Content</button>
           {user.role === "admin" && <button className={tab === "users" ? "is-active" : ""} onClick={() => { setTab("users"); loadUsers(); }}>Staff accounts</button>}

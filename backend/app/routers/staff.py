@@ -1,3 +1,4 @@
+import hashlib
 import re
 import uuid
 from pathlib import Path
@@ -5,7 +6,7 @@ from pathlib import Path
 from fastapi import APIRouter, Depends, File, Form, HTTPException, Request, Response, UploadFile
 from pydantic import BaseModel, Field
 
-from ..config import BOOTSTRAP_ADMIN_PASSWORD, BOOTSTRAP_ADMIN_USERNAME, MAX_UPLOAD_BYTES, STAFF_UPLOAD_DIR
+from ..config import BOOTSTRAP_ADMIN_PASSWORD, BOOTSTRAP_ADMIN_USERNAME, MAX_UPLOAD_BYTES, STAFF_COOKIE_NAME, STAFF_UPLOAD_DIR
 from ..database import get_conn
 from ..staff_auth import (
     bootstrap_admin,
@@ -24,6 +25,11 @@ router = APIRouter(prefix="/api/staff")
 class LoginPayload(BaseModel):
     username: str = Field(min_length=1, max_length=80)
     password: str = Field(min_length=1, max_length=256)
+
+
+class PasswordChangePayload(BaseModel):
+    current_password: str = Field(min_length=1, max_length=256)
+    new_password: str = Field(min_length=8, max_length=256)
 
 
 class UserPayload(BaseModel):
@@ -84,6 +90,23 @@ def logout(request: Request, response: Response):
 @router.get("/me")
 def me(user: dict = Depends(current_staff)):
     return public_user(user)
+
+
+@router.post("/password")
+def change_password(payload: PasswordChangePayload, request: Request, user: dict = Depends(current_staff)):
+    with get_conn() as conn, conn.cursor() as cur:
+        cur.execute("SELECT password_hash FROM staff_users WHERE id = %s", (user["id"],))
+        row = cur.fetchone()
+        if not row or not verify_password(payload.current_password, row["password_hash"]):
+            raise HTTPException(status_code=400, detail="Current password is incorrect")
+        if payload.current_password == payload.new_password:
+            raise HTTPException(status_code=400, detail="Choose a new password different from the current one")
+        cur.execute("UPDATE staff_users SET password_hash = %s WHERE id = %s", (hash_password(payload.new_password), user["id"]))
+        token = request.cookies.get(STAFF_COOKIE_NAME)
+        if token:
+            token_hash = hashlib.sha256(token.encode()).hexdigest()
+            cur.execute("DELETE FROM staff_sessions WHERE user_id = %s AND token_hash <> %s", (user["id"], token_hash))
+    return {"ok": True}
 
 
 @router.get("/users")
